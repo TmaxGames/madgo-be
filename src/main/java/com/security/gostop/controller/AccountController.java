@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/security/v1/Account")
+@RequestMapping("/security/v1/account")
 public class AccountController {
     private final AccountService accountService;
 

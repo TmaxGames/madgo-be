@@ -6,12 +6,14 @@ import com.security.gostop.exception.account.DuplicatedIdException;
 import com.security.gostop.repository.rdb.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
     /*
      * signup
      * 지정 아이디가 존재하는지 확인
@@ -19,7 +21,7 @@ public class AccountService {
      */
     @Transactional
     public void signup(AccountCreateRequestDto accountCreateRequestDto){
-        if(accountRepository.findAccountById(accountCreateRequestDto.getId()).isPresent()){
+        if(accountRepository.findByAccountId(accountCreateRequestDto.getId()) != null){
             //중복 아이디
             throw new DuplicatedIdException();
         }
@@ -27,7 +29,7 @@ public class AccountService {
         Account account = Account.builder()
                 .accountId(accountCreateRequestDto.getId())
                 .name(accountCreateRequestDto.getName())
-                .password(accountCreateRequestDto.getPassword())
+                .password(passwordEncoder.encode(accountCreateRequestDto.getPassword()))
                 .build();
 
         accountRepository.save(account);

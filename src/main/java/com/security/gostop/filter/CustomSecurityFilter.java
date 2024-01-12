@@ -42,13 +42,10 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request){
         String method = request.getMethod().toUpperCase();
         String uri = request.getRequestURI();
-        System.out.println(method);
-        System.out.println(uri);
 
         boolean isValidSecurityApi = WHITELIST_ANONYMOUS.stream().anyMatch(
                 pattern -> antPathMatcher.match(pattern.getUriPattern(), uri) && pattern.getHttpMethod().equals(method)
         );
-        System.out.println(isValidSecurityApi);
         return isValidSecurityApi;
     }
 
@@ -59,7 +56,7 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
         String delete = "DELETE";
         WHITELIST_ANONYMOUS = new ArrayList<>();
         WHITELIST_ANONYMOUS.addAll(List.of(
-                HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/account/login").build(),
+                HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/session/login").build(),
                 HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/account/sign-up").build()
         ));
     }

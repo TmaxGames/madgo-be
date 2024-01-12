@@ -17,6 +17,6 @@ public class SessionController {
     private final SessionService sessionService;
     @PostMapping("/login")
     public ResponseDto login(@RequestBody SessionLoginRequestDto sessionLoginRequestDto, HttpServletRequest request){
-        return ResponseDto.ok("data", sessionService.login(sessionLoginRequestDto, request.getSession()));
+        return ResponseDto.ok("loginInfo", sessionService.login(sessionLoginRequestDto, request.getSession()));
     }
 }

@@ -31,6 +31,7 @@ public class SessionService {
             //전달 받을때는 암호화 x, DB내용은 암호화
             throw new InvalidAccountException();
         }
+
         if(sessionRepository.findByAccountId(sessionLoginRequestDto.getAccountId()) != null){
             //이미 로그인이 되어있는 상황
             throw new SessionAlreadyExistException();
@@ -38,9 +39,10 @@ public class SessionService {
 
         AccountSession accountSession = AccountSession.builder()
                 .id(session.getId())
-                .AccountId(sessionLoginRequestDto.getAccountId())
+                .accountId(sessionLoginRequestDto.getAccountId())
                 .expirationDateTime(LocalDateTime.now().plusMinutes(60))
                 .build();
+        sessionRepository.save(accountSession);
 
         return SessionLoginResponseDto.builder()
                 .accountId(accountSession.getAccountId())

@@ -20,16 +20,17 @@ public class AccountService {
      * 비밀번호가 valid 한지 확인
      */
     @Transactional
-    public void signup(AccountCreateRequestDto accountCreateRequestDto){
-        if(accountRepository.findByAccountId(accountCreateRequestDto.getId()) != null){
+    public void signup(AccountCreateRequestDto accountCreateRequestDto) {
+        if (accountRepository.findByAccountId(accountCreateRequestDto.getId()) != null) {
             //중복 아이디
             throw new DuplicatedIdException();
         }
+        String encodedPassword = passwordEncoder.encode(accountCreateRequestDto.getPassword());
 
         Account account = Account.builder()
                 .accountId(accountCreateRequestDto.getId())
                 .name(accountCreateRequestDto.getName())
-                .password(passwordEncoder.encode(accountCreateRequestDto.getPassword()))
+                .password(encodedPassword)
                 .build();
 
         accountRepository.save(account);

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface SessionRepository extends CrudRepository<AccountSession, Long> {
+public interface SessionRepository extends CrudRepository<AccountSession, String> {
     AccountSession findByAccountId(String accountId);
 }

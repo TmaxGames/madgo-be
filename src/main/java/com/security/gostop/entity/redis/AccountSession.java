@@ -23,10 +23,7 @@ public class AccountSession {
         this.expirationDateTime = LocalDateTime.now().plusMinutes(30);
     }
 
-    public void isExpiredSession() {
-        if(this.expirationDateTime.isBefore(LocalDateTime.now())) {
-            throw new SessionExpiredException();
-        }
+    public boolean isExpiredSession() {
+        return this.expirationDateTime.isBefore(LocalDateTime.now());
     }
-
 }

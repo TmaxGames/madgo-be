@@ -1,7 +1,6 @@
 package com.security.gostop.entity.rdb;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,10 +11,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "ACCOUNT")
 public class Account {
     @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "ACCOUNT_ID")
     private String accountId;
+    @Column(name = "PASSWORD")
     private String password;
+    @Column(name = "NAME")
     private String name;
 }

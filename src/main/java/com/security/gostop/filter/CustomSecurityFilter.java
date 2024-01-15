@@ -57,6 +57,7 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
         WHITELIST_ANONYMOUS = new ArrayList<>();
         WHITELIST_ANONYMOUS.addAll(List.of(
                 HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/session/login").build(),
+                HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/session/logout").build(),
                 HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/account/sign-up").build(),
                 HttpRequestPattern.builder().httpMethod(get).uriPattern("/swagger*/**").build(),
                 HttpRequestPattern.builder().httpMethod(get).uriPattern("/v3/api-docs/**").build()

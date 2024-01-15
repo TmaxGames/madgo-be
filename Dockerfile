@@ -3,9 +3,8 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /root
 
-ARG NDB_PASSWORD
-
 ENV PROFILE deploy
+ENV PORT 8081
 
 EXPOSE ${PORT}
 

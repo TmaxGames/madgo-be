@@ -32,7 +32,7 @@ spring:
       on-profile: deploy
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/gostop
+    url: jdbc:mysql://192.168.155.95:3306/gostop
     username: root
     password: 1
 

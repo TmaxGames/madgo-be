@@ -21,7 +21,7 @@ public class AccountService {
      */
     @Transactional
     public void signup(AccountCreateRequestDto accountCreateRequestDto) {
-        if (accountRepository.findByAccountId(accountCreateRequestDto.getId()) != null) {
+        if (accountRepository.findByAccountId(accountCreateRequestDto.getId()).isPresent()) {
             //중복 아이디
             throw new DuplicatedIdException();
         }

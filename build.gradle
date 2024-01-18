@@ -7,6 +7,16 @@ plugins {
 group = 'com.security'
 version = '0.0.1-SNAPSHOT'
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	all {
+		// 기존 스프링부트에 있는 로거(Logback) 의존성을 제외한다. -> LOG4J2 를 쓰기 위해
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
+}
+
 java {
 	sourceCompatibility = '17'
 }
@@ -30,6 +40,8 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	//swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+	//로깅
+	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 }
 
 tasks.named('test') {

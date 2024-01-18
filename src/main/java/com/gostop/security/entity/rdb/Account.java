@@ -23,4 +23,14 @@ public class Account {
     private String password;
     @Column(name = "NAME")
     private String name;
+    @Column(name = "MONEY")
+    private Long money;
+    @Column(name = "SCORE")
+    private Long score;
+    @Column(name = "WIN")
+    private Long win;
+    @Column(name = "LOSE")
+    private Long lose;
+    @Column(name = "PROFILE_URL")
+    private String profile_url;
 }

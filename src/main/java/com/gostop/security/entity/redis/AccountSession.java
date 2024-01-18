@@ -16,6 +16,8 @@ public class AccountSession {
     private String id;
     @Indexed
     private String accountId;
+    @Indexed
+    private String sessionId;
     private LocalDateTime expirationDateTime;
 
     public void refreshExpirationTime() {
@@ -31,6 +33,7 @@ public class AccountSession {
         return "AccountSession{" +
                 "id='" + id + '\'' +
                 ", accountId='" + accountId + '\'' +
+                ", sessionId='" + sessionId + '\'' +
                 ", expirationDateTime=" + expirationDateTime +
                 '}';
     }

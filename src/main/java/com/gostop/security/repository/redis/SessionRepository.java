@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface SessionRepository extends CrudRepository<AccountSession, String> {
     Optional<AccountSession> findByAccountId(String accountId);
+    Optional<AccountSession> findBySessionId(String sessionId);
 }

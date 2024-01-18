@@ -31,7 +31,7 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String sessionId = request.getSession().getId();
         //세션이 없는데 유저 api에 접근을 하려한 경우
-        AccountSession accountSession = sessionRepository.findById(sessionId).orElseThrow(SessionNotFoundException::new);
+        AccountSession accountSession = sessionRepository.findBySessionId(sessionId).orElseThrow(SessionNotFoundException::new);
         if(accountSession.isExpiredSession()){
             throw new SessionExpiredException();
         }

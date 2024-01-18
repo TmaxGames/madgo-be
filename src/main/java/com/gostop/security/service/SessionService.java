@@ -41,7 +41,7 @@ public class SessionService {
         }
 
         AccountSession accountSession = AccountSession.builder()
-                .id(session.getId())
+                .sessionId(session.getId())
                 .accountId(sessionLoginRequestDto.getAccountId())
                 .expirationDateTime(LocalDateTime.now().plusMinutes(60))
                 .build();

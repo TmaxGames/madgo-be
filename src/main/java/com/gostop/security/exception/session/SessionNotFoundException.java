@@ -5,5 +5,5 @@ import com.gostop.security.exception.CustomException;
 import com.gostop.security.exception.ErrorCode;
 
 public class SessionNotFoundException extends CustomException {
-    public SessionNotFoundException() {super(ErrorCode.SESSION_EXPIRED);}
+    public SessionNotFoundException() {super(ErrorCode.SESSION_NOT_FOUND);}
 }

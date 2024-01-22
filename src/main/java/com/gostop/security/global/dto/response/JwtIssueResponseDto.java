@@ -12,10 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "로그인 완료 응답")
-public class SessionLoginResponseDto {
-    @Schema(description = "로그인이 완료된 계정 아이디")
-    private String accountId;
-    @Schema(description = "로그인이 완료된 계정 닉네임")
-    private String name;
+@Schema(description = "jwt 토큰 발행 응답")
+public class JwtIssueResponseDto {
+    @Schema(description = "jwt 토큰")
+    private String token;
 }

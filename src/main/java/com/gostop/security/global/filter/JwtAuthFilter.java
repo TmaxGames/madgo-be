@@ -33,7 +33,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private List<HttpRequestPattern> WHITELIST_ANONYMOUS;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("asd");
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
@@ -42,24 +41,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             username = jwtUtil.extractUsername(token);
         }
 
-//        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-//            Account account = accountRepository.findByName(username).orElseThrow(InvalidTokenException::new);
-//            if(jwtUtil.validateToken(token, account)){
-//                UserDetails userDetails = userInfoService.loadUserByUsername(username);
-//                //현 토큰의 role과 세팅된 role이 같은지 확인
-//                UsernamePasswordAuthenticationToken authToken
-//                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                SecurityContextHolder.getContext().setAuthentication(authToken);
-//            }
-//            filterChain.doFilter(request, response);
-//        }
+        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            Account account = accountRepository.findByName(username).orElseThrow(InvalidTokenException::new);
+            if(jwtUtil.validateToken(token, account)){
+                UserDetails userDetails = userInfoService.loadUserByUsername(username);
+                //현 토큰의 role과 세팅된 role이 같은지 확인
+                UsernamePasswordAuthenticationToken authToken
+                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+            filterChain.doFilter(request, response);
+        }
         filterChain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
-        System.out.println("should not");
         String method = request.getMethod().toUpperCase();
         String uri = request.getRequestURI();
 
@@ -77,6 +75,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         WHITELIST_ANONYMOUS = new ArrayList<>();
         WHITELIST_ANONYMOUS.addAll(List.of(
                 HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/account/sign-up").build(),
+                HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/jwt/issue").build(),
                 HttpRequestPattern.builder().httpMethod(get).uriPattern("/swagger*/**").build(),
                 HttpRequestPattern.builder().httpMethod(get).uriPattern("/v3/api-docs/**").build()
         ));

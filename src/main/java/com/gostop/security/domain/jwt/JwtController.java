@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,5 +40,15 @@ public class JwtController {
     })
     public ResponseEntity<JwtIssueResponseDto> issue(@RequestBody AccountCreateRequestDto accountCreateRequestDto){
         return ResponseEntity.ok(jwtService.authenticateAndGetToken(accountCreateRequestDto));
+    }
+
+    @GetMapping("/test")
+    @Operation(
+            summary = "테스트 api",
+            description = "jwt를 통해 잘 통신했다면 good을 리턴"
+    )
+    public ResponseEntity<String> test(){
+        System.out.println("asdad");
+        return ResponseEntity.ok("good");
     }
 }

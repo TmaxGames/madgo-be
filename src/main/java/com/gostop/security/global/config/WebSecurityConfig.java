@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-//    private final CustomSecurityFilter authorizationFilter;
     private final JwtAuthFilter jwtAuthFilter;
     private final FilterExceptionHandler filterExceptionHandler;
     @Bean
@@ -35,7 +34,7 @@ public class WebSecurityConfig {
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(filterExceptionHandler, CustomSecurityFilter.class);
+                .addFilterBefore(filterExceptionHandler, JwtAuthFilter.class);
         return http.build();
     }
 

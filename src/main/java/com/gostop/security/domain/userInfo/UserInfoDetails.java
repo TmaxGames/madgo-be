@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class UserInfoDetails implements UserDetails {
-    private String name;
-    private String password;
+    private final String name;
+    private final String password;
     private List<GrantedAuthority> authorityList;
 
     public UserInfoDetails(Account account){

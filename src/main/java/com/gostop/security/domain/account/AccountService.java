@@ -19,11 +19,7 @@ public class AccountService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    /*
-     * signup
-     * 지정 아이디가 존재하는지 확인
-     * 비밀번호가 valid 한지 확인
-     */
+
     @Transactional
     public String signup(AccountCreateRequestDto accountCreateRequestDto) {
         if (accountRepository.findByAccountId(accountCreateRequestDto.getId()).isPresent()) {

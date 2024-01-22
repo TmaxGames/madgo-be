@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 public class UserInfoDetails implements UserDetails {
     private final String name;
     private final String password;
-    private List<GrantedAuthority> authorityList;
+    private final List<GrantedAuthority> authorityList;
 
     public UserInfoDetails(Account account){
         name = account.getName();

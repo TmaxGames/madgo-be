@@ -2,13 +2,13 @@ package com.gostop.security.domain.account;
 
 import com.gostop.security.global.exception.account.DuplicatedIdException;
 import com.gostop.security.global.dto.requset.AccountCreateRequestDto;
-import com.gostop.security.global.utils.JwtUtil;
+import com.gostop.security.global.exception.account.InvalidAccountException;
+import com.gostop.security.domain.jwt.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +16,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
-    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-
     @Transactional
-    public String signup(AccountCreateRequestDto accountCreateRequestDto) {
+    public void signup(AccountCreateRequestDto accountCreateRequestDto) {
         if (accountRepository.findByAccountId(accountCreateRequestDto.getId()).isPresent()) {
             //중복 아이디
             throw new DuplicatedIdException();
@@ -32,22 +29,14 @@ public class AccountService {
                 .accountId(accountCreateRequestDto.getId())
                 .name(accountCreateRequestDto.getName())
                 .password(encodedPassword)
+                .role("PLAYER")
+                .win(0L)
+                .lose(0L)
+                .money(10000L)
+                .score(0L)
+                .profile_url("asd")
                 .build();
 
         accountRepository.save(account);
-
-        return authenticateAndGetToken(accountCreateRequestDto);
-    }
-
-    private String authenticateAndGetToken(AccountCreateRequestDto accountCreateRequestDto) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(accountCreateRequestDto.getName(), accountCreateRequestDto.getPassword())
-        );
-        if (authentication.isAuthenticated()) {
-            return jwtUtil.generateToken(accountCreateRequestDto.getName());
-        }
-        else{
-            throw new UsernameNotFoundException("잘못된 유저입니다.");
-        }
     }
 }

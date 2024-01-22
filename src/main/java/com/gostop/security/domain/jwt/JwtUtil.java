@@ -1,4 +1,4 @@
-package com.gostop.security.global.utils;
+package com.gostop.security.domain.jwt;
 
 import com.gostop.security.domain.account.Account;
 import io.jsonwebtoken.Claims;

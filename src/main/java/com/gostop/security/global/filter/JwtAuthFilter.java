@@ -4,7 +4,7 @@ import com.gostop.security.domain.account.Account;
 import com.gostop.security.global.exception.token.InvalidTokenException;
 import com.gostop.security.domain.account.AccountRepository;
 import com.gostop.security.domain.userInfo.UserInfoService;
-import com.gostop.security.global.utils.JwtUtil;
+import com.gostop.security.domain.jwt.JwtUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,6 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private List<HttpRequestPattern> WHITELIST_ANONYMOUS;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("asd");
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
@@ -41,21 +42,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             username = jwtUtil.extractUsername(token);
         }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            Account account = accountRepository.findByName(username).orElseThrow(InvalidTokenException::new);
-            if(jwtUtil.validateToken(token, account)){
-                UserDetails userDetails = userInfoService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authToken
-                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-            filterChain.doFilter(request, response);
-        }
+//        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+//            Account account = accountRepository.findByName(username).orElseThrow(InvalidTokenException::new);
+//            if(jwtUtil.validateToken(token, account)){
+//                UserDetails userDetails = userInfoService.loadUserByUsername(username);
+//                //현 토큰의 role과 세팅된 role이 같은지 확인
+//                UsernamePasswordAuthenticationToken authToken
+//                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                SecurityContextHolder.getContext().setAuthentication(authToken);
+//            }
+//            filterChain.doFilter(request, response);
+//        }
+        filterChain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
+        System.out.println("should not");
         String method = request.getMethod().toUpperCase();
         String uri = request.getRequestURI();
 

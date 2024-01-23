@@ -17,11 +17,11 @@ public class JwtService {
     private final JwtUtil jwtUtil;
     public JwtIssueResponseDto authenticateAndGetToken(AccountCreateRequestDto accountCreateRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(accountCreateRequestDto.getName(), accountCreateRequestDto.getPassword())
+                new UsernamePasswordAuthenticationToken(accountCreateRequestDto.getId(), accountCreateRequestDto.getPassword())
         );
         if (authentication.isAuthenticated()) {
             return JwtIssueResponseDto.builder()
-                    .token(jwtUtil.generateToken(accountCreateRequestDto.getName()))
+                    .token(jwtUtil.generateToken(accountCreateRequestDto.getId()))
                     .build();
         } else {
             throw new InvalidAccountException();

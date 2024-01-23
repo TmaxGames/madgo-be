@@ -13,6 +13,4 @@ public class AccountCreateRequestDto {
     private String id;
     @Schema(description = "비밀번호")
     private String password;
-    @Schema(description = "유저이름")
-    private String name;
 }

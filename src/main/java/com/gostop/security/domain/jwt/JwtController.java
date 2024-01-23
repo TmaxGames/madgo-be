@@ -48,7 +48,6 @@ public class JwtController {
             description = "jwt를 통해 잘 통신했다면 good을 리턴"
     )
     public ResponseEntity<String> test(){
-        System.out.println("asdad");
         return ResponseEntity.ok("good");
     }
 }

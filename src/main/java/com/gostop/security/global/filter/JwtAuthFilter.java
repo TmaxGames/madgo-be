@@ -1,6 +1,7 @@
 package com.gostop.security.global.filter;
 
 import com.gostop.security.domain.account.Account;
+import com.gostop.security.domain.jwt.JwtType;
 import com.gostop.security.global.exception.token.InvalidTokenException;
 import com.gostop.security.domain.account.AccountRepository;
 import com.gostop.security.domain.userInfo.UserInfoService;
@@ -35,25 +36,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
         String token = null;
-        String username = null;
+        String userId = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
-            username = jwtUtil.extractUsername(token);
+            userId = jwtUtil.extractUserId(token);
         }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            Account account = accountRepository.findByName(username).orElseThrow(InvalidTokenException::new);
-            if(jwtUtil.validateToken(token, account)){
-                UserDetails userDetails = userInfoService.loadUserByUsername(username);
-                //현 토큰의 role과 세팅된 role이 같은지 확인
+        if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            Account account = accountRepository.findByAccountId(userId).orElseThrow(InvalidTokenException::new);
+            if(jwtUtil.validateToken(token, account, JwtType.ACCESS_TOKEN)){
+                UserDetails userDetails = userInfoService.loadUserByUsername(userId);
                 UsernamePasswordAuthenticationToken authToken
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                filterChain.doFilter(request, response);
             }
-            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
+        throw new InvalidTokenException();
     }
 
     @Override

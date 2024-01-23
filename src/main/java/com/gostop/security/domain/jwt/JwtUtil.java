@@ -18,8 +18,9 @@ import java.util.function.Function;
 public class JwtUtil {
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
-    public String generateToken(String userName) {
+    public String generateToken(String userName, JwtType type) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("jwtType", type);
         return createToken(claims, userName);
     }
 
@@ -37,7 +38,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String extractUsername(String token) {
+    public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -63,8 +64,9 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, Account account) {
-        final String username = extractUsername(token);
-        return (username.equals(account.getName()) && !isTokenExpired(token));
+    public Boolean validateToken(String token, Account account, JwtType expect) {
+        final String userId = extractUserId(token);
+        final String jwtType = (String) extractAllClaims(token).get("jwtType");
+        return userId.equals(account.getAccountId()) && !isTokenExpired(token) && jwtType.equals(expect.toString());
     }
 }

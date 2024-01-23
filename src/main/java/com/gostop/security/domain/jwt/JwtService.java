@@ -1,6 +1,7 @@
 package com.gostop.security.domain.jwt;
 
 import com.gostop.security.global.dto.requset.AccountCreateRequestDto;
+import com.gostop.security.global.dto.requset.TokenCreateRequestDto;
 import com.gostop.security.global.dto.response.JwtIssueResponseDto;
 import com.gostop.security.global.exception.account.DuplicatedIdException;
 import com.gostop.security.global.exception.account.InvalidAccountException;
@@ -15,13 +16,14 @@ import org.springframework.stereotype.Service;
 public class JwtService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    public JwtIssueResponseDto authenticateAndGetToken(AccountCreateRequestDto accountCreateRequestDto) {
+    public JwtIssueResponseDto authenticateAndGetToken(TokenCreateRequestDto tokenCreateRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(accountCreateRequestDto.getId(), accountCreateRequestDto.getPassword())
+                new UsernamePasswordAuthenticationToken(tokenCreateRequestDto.getId(), tokenCreateRequestDto.getPassword())
         );
         if (authentication.isAuthenticated()) {
             return JwtIssueResponseDto.builder()
-                    .token(jwtUtil.generateToken(accountCreateRequestDto.getId()))
+                    .accessToken(jwtUtil.generateToken(tokenCreateRequestDto.getId(), JwtType.ACCESS_TOKEN))
+                    .refreshToken(jwtUtil.generateToken(tokenCreateRequestDto.getId(), JwtType.REFRESH_TOKEN))
                     .build();
         } else {
             throw new InvalidAccountException();

@@ -15,5 +15,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "jwt 토큰 발행 응답")
 public class JwtIssueResponseDto {
     @Schema(description = "jwt 토큰")
-    private String token;
+    private String accessToken;
+    @Schema(description = "jwt 토큰")
+    private String refreshToken;
 }

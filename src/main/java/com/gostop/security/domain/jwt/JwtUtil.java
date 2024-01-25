@@ -2,6 +2,7 @@ package com.gostop.security.domain.jwt;
 
 import com.gostop.security.domain.account.Account;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -21,15 +22,23 @@ public class JwtUtil {
     public String generateToken(String userName, JwtType type) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("jwtType", type);
-        return createToken(claims, userName);
+        switch (type){
+            case ACCESS_TOKEN -> {
+                return createToken(claims, userName, 30L);
+            }
+            case REFRESH_TOKEN -> {
+                return createToken(claims, userName, 60L);
+            }
+            default -> throw new RuntimeException("잘못된 토큰 타입입니다.");
+        }
     }
 
-    private String createToken(Map<String, Object> claims, String userName) {
+    private String createToken(Map<String, Object> claims, String userName, Long minute) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * minute))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 

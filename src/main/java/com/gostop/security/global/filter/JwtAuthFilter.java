@@ -78,7 +78,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         WHITELIST_ANONYMOUS = new ArrayList<>();
         WHITELIST_ANONYMOUS.addAll(List.of(
                 HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/account/sign-up").build(),
-                HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/jwt/issue").build(),
+                HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/jwt/login").build(),
+                HttpRequestPattern.builder().httpMethod(post).uriPattern("/security/v1/jwt/refresh").build(),
                 HttpRequestPattern.builder().httpMethod(get).uriPattern("/swagger*/**").build(),
                 HttpRequestPattern.builder().httpMethod(get).uriPattern("/v3/api-docs/**").build()
         ));

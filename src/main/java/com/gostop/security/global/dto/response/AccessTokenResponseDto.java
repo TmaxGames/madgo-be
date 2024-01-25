@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "jwt 토큰 발행 응답")
-public class JwtIssueResponseDto {
+public class AccessTokenResponseDto {
     @Schema(description = "액세스 토큰")
     private String accessToken;
-    @Schema(description = "리프레시 토큰")
-    private String refreshToken;
 }

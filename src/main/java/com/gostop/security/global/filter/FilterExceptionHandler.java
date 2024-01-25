@@ -1,6 +1,7 @@
 package com.gostop.security.global.filter;
 
 import com.gostop.security.global.exception.CustomException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,8 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             response.setStatus(e.getErrorCode().getStatus());
+        }catch (JwtException e){
+            response.setStatus(401);
         } catch (Exception e){
             response.setStatus(500);
         }

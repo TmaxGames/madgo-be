@@ -35,11 +35,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String userId = null;
+        String token;
+        String userId;
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
             userId = jwtUtil.extractUserId(token);
+        }
+        else{
+            throw new InvalidTokenException();
         }
 
         if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){

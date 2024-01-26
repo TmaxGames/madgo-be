@@ -97,6 +97,6 @@ public class JwtUtil {
     }
 
     public Boolean isValidUsersNotExpiredRefreshToken(String userId, RefreshToken refreshToken){
-        return !refreshToken.isExpired() && refreshToken.getId().equals(userId);
+        return !refreshToken.isExpired() && refreshToken.getAccountId().equals(userId);
     }
 }

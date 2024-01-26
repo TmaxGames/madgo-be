@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "로그아웃용 DTO")
-public class SessionLogoutRequestDto {
-    @Schema(description = "계정 아이디")
-    private String accountId;
+@Schema(description = "토큰 리프레시 DTO")
+public class TokenRefreshRequestDto {
+    @Schema(description = "아이디")
+    private String id;
 }

@@ -3,6 +3,7 @@ package com.gostop.security.domain.jwt;
 import com.gostop.security.global.dto.ResponseDto;
 import com.gostop.security.global.dto.requset.AccountCreateRequestDto;
 import com.gostop.security.global.dto.requset.TokenCreateRequestDto;
+import com.gostop.security.global.dto.requset.TokenRefreshRequestDto;
 import com.gostop.security.global.dto.response.AccessTokenResponseDto;
 import com.gostop.security.global.dto.response.JwtIssueResponseDto;
 import com.gostop.security.global.exception.ErrorResponse;
@@ -19,10 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -68,8 +66,8 @@ public class JwtController {
                     description = "존재하지 않는 아이디, 비밀번호, 닉네임 일 경우, 403 반환",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<AccessTokenResponseDto> refresh(@RequestBody TokenCreateRequestDto tokenCreateRequestDto, HttpServletRequest request, HttpServletResponse response){
-        JwtIssueResponseDto dto = jwtService.refresh(tokenCreateRequestDto, request);
+    public ResponseEntity<AccessTokenResponseDto> refresh(@RequestHeader String accountId, HttpServletRequest request, HttpServletResponse response){
+        JwtIssueResponseDto dto = jwtService.refresh(accountId, request);
         AccessTokenResponseDto responseDto = AccessTokenResponseDto.builder()
                 .accessToken(dto.getAccessToken())
                 .build();

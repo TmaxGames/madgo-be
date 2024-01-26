@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "계정 생성 DTO")
+@Schema(description = "토큰 생성 DTO")
 public class TokenCreateRequestDto {
     @Schema(description = "아이디")
     private String id;

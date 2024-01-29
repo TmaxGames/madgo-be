@@ -10,6 +10,8 @@ import com.gostop.security.global.exception.account.InvalidAccountException;
 import com.gostop.security.global.exception.token.InvalidTokenException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,6 +38,16 @@ public class JwtService {
         } else {
             throw new InvalidAccountException();
         }
+    }
+
+    @Transactional
+    public void removeAndDestroyToken(String Authorization, String accountId, HttpServletRequest request){
+        String refreshToken = Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals("REFRESH_TOKEN"))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElseThrow(InvalidAccountException::new);
+
     }
 
     public JwtIssueResponseDto refresh(String accountId, HttpServletRequest request) {

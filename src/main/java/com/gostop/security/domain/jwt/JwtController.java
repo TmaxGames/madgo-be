@@ -40,6 +40,10 @@ public class JwtController {
             @ApiResponse(
                     responseCode = "403",
                     description = "존재하지 않는 아이디, 비밀번호, 닉네임 일 경우, 403 반환",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "권한이 없는 사용자의 경우 401 반환",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<AccessTokenResponseDto> issue(@RequestBody TokenCreateRequestDto tokenCreateRequestDto, HttpServletResponse response){
@@ -50,6 +54,31 @@ public class JwtController {
         Cookie tokenCookie = new Cookie("REFRESH_TOKEN", dto.getRefreshToken());
         response.addCookie(tokenCookie);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/logout")
+    @Operation(
+            summary = "로그아웃을 시키고 토큰 만료",
+            description = "로그아웃 및 토큰 파기시기는 api"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "성공 시 ok 반환"),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "로그인 되어있지 않거나 존재하지 않는 아이디, 비밀번호, 닉네임 일 경우, 403 반환",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "권한이 없는 사용자의 경우 401 반환",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseDto logout(@RequestHeader String Authorization, @RequestHeader String accountId, HttpServletRequest request){
+        //access token 비활성화, 리프레시 토큰 레디스에서 제거 및 비활성화
+         jwtService.removeAndDestroyToken(Authorization, accountId, request);
+        //TODO remove cookie
+        return ResponseDto.ok();
     }
 
     @PostMapping("/refresh")

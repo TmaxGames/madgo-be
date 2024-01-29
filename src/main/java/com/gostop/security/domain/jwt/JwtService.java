@@ -1,5 +1,6 @@
 package com.gostop.security.domain.jwt;
 
+import com.gostop.security.domain.account.Account;
 import com.gostop.security.domain.account.AccountRepository;
 import com.gostop.security.domain.jwt.refresh.RefreshToken;
 import com.gostop.security.domain.jwt.refresh.RefreshTokenRepository;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtService {
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccountRepository accountRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     public JwtIssueResponseDto authenticateAndGetToken(TokenCreateRequestDto tokenCreateRequestDto) {
@@ -42,12 +44,29 @@ public class JwtService {
 
     @Transactional
     public void removeAndDestroyToken(String Authorization, String accountId, HttpServletRequest request){
-        String refreshToken = Arrays.stream(request.getCookies())
+        String refreshTokenString = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals("REFRESH_TOKEN"))
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElseThrow(InvalidAccountException::new);
 
+        //access token의 경우 이미 필터에서 검증이 됨
+        String[] parsedAccessToken = Authorization.split(" ");
+        if(parsedAccessToken.length != 2 || !parsedAccessToken[0].equals("Bearer")){
+            throw new InvalidTokenException();
+        }
+        String accessToken = parsedAccessToken[1];
+
+        Account account = accountRepository.findByAccountId(accountId).orElseThrow(InvalidAccountException::new);
+        if(!jwtUtil.isValidateAccessToken(accessToken, account, JwtType.ACCESS_TOKEN)){
+            throw new InvalidTokenException();
+        }
+
+        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(refreshTokenString).orElseThrow(InvalidTokenException::new);
+
+        if(!jwtUtil.isValidUsersNotExpiredRefreshToken(accountId, refreshToken)){
+            throw new InvalidTokenException();
+        }
     }
 
     public JwtIssueResponseDto refresh(String accountId, HttpServletRequest request) {

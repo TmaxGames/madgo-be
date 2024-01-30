@@ -35,6 +35,9 @@ spring:
     url: jdbc:mysql://192.168.155.95:3306/gostop
     username: root
     password: 1
+  jpa:
+    hibernate:
+      ddl-auto: update
   data:
     redis:
       host: 192.168.155.95

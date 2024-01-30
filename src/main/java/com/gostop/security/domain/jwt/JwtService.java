@@ -1,6 +1,9 @@
 package com.gostop.security.domain.jwt;
 
+import com.gostop.security.domain.account.Account;
 import com.gostop.security.domain.account.AccountRepository;
+import com.gostop.security.domain.jwt.access.AccessToken;
+import com.gostop.security.domain.jwt.access.AccessTokenRepository;
 import com.gostop.security.domain.jwt.refresh.RefreshToken;
 import com.gostop.security.domain.jwt.refresh.RefreshTokenRepository;
 import com.gostop.security.global.dto.requset.TokenCreateRequestDto;
@@ -10,6 +13,8 @@ import com.gostop.security.global.exception.account.InvalidAccountException;
 import com.gostop.security.global.exception.token.InvalidTokenException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +27,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtService {
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccessTokenRepository accessTokenRepository;
+    private final AccountRepository accountRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     public JwtIssueResponseDto authenticateAndGetToken(TokenCreateRequestDto tokenCreateRequestDto) {
@@ -36,6 +43,35 @@ public class JwtService {
         } else {
             throw new InvalidAccountException();
         }
+    }
+
+    @Transactional
+    public void removeAndDestroyToken(String Authorization, String accountId, HttpServletRequest request){
+        String refreshTokenString = Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals("REFRESH_TOKEN"))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElseThrow(InvalidAccountException::new);
+
+        //access token의 경우 이미 필터에서 검증이 됨
+        String[] parsedAccessToken = Authorization.split(" ");
+        String accessTokenString = parsedAccessToken[1];
+
+        Account account = accountRepository.findByAccountId(accountId).orElseThrow(InvalidAccountException::new);
+        if(!jwtUtil.isValidateAccessToken(accessTokenString, account, JwtType.ACCESS_TOKEN)){
+            throw new InvalidTokenException();
+        }
+
+        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(refreshTokenString).orElseThrow(InvalidTokenException::new);
+
+        if(!jwtUtil.isValidUsersNotExpiredRefreshToken(accountId, refreshToken)){
+            throw new InvalidTokenException();
+        }
+
+        AccessToken accessToken = AccessToken.builder()
+                .accessToken(accessTokenString)
+                .build();
+        accessTokenRepository.save(accessToken);
     }
 
     public JwtIssueResponseDto refresh(String accountId, HttpServletRequest request) {

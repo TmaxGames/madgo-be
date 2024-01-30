@@ -2,6 +2,8 @@ package com.gostop.security.domain.jwt;
 
 import com.gostop.security.domain.account.Account;
 import com.gostop.security.domain.account.AccountRepository;
+import com.gostop.security.domain.jwt.access.AccessToken;
+import com.gostop.security.domain.jwt.access.AccessTokenRepository;
 import com.gostop.security.domain.jwt.refresh.RefreshToken;
 import com.gostop.security.domain.jwt.refresh.RefreshTokenRepository;
 import com.gostop.security.global.dto.requset.TokenCreateRequestDto;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtService {
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccessTokenRepository accessTokenRepository;
     private final AccountRepository accountRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -52,13 +55,10 @@ public class JwtService {
 
         //access token의 경우 이미 필터에서 검증이 됨
         String[] parsedAccessToken = Authorization.split(" ");
-        if(parsedAccessToken.length != 2 || !parsedAccessToken[0].equals("Bearer")){
-            throw new InvalidTokenException();
-        }
-        String accessToken = parsedAccessToken[1];
+        String accessTokenString = parsedAccessToken[1];
 
         Account account = accountRepository.findByAccountId(accountId).orElseThrow(InvalidAccountException::new);
-        if(!jwtUtil.isValidateAccessToken(accessToken, account, JwtType.ACCESS_TOKEN)){
+        if(!jwtUtil.isValidateAccessToken(accessTokenString, account, JwtType.ACCESS_TOKEN)){
             throw new InvalidTokenException();
         }
 
@@ -67,6 +67,11 @@ public class JwtService {
         if(!jwtUtil.isValidUsersNotExpiredRefreshToken(accountId, refreshToken)){
             throw new InvalidTokenException();
         }
+
+        AccessToken accessToken = AccessToken.builder()
+                .accessToken(accessTokenString)
+                .build();
+        accessTokenRepository.save(accessToken);
     }
 
     public JwtIssueResponseDto refresh(String accountId, HttpServletRequest request) {

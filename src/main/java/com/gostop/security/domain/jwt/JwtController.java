@@ -22,7 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/security/v1/jwt")
 public class JwtController {
@@ -75,10 +75,9 @@ public class JwtController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseDto logout(@RequestHeader String Authorization, @RequestHeader String accountId, HttpServletRequest request){
-        //access token 비활성화, 리프레시 토큰 레디스에서 제거 및 비활성화
+        //access token 비활성화(블랙 리스트), 리프레시 토큰 레디스에서 제거 및 비활성화
          jwtService.removeAndDestroyToken(Authorization, accountId, request);
-        //TODO remove cookie
-        return ResponseDto.ok();
+         return ResponseDto.ok();
     }
 
     @PostMapping("/refresh")

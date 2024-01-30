@@ -2,6 +2,7 @@ package com.gostop.security.global.filter;
 
 import com.gostop.security.domain.account.Account;
 import com.gostop.security.domain.jwt.JwtType;
+import com.gostop.security.domain.jwt.access.AccessTokenRepository;
 import com.gostop.security.global.exception.token.InvalidTokenException;
 import com.gostop.security.domain.account.AccountRepository;
 import com.gostop.security.domain.userInfo.UserInfoService;
@@ -29,6 +30,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserInfoService userInfoService;
     private final AccountRepository accountRepository;
+    private final AccessTokenRepository accessTokenRepository;
     private final JwtUtil jwtUtil;
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
     private List<HttpRequestPattern> WHITELIST_ANONYMOUS;
@@ -42,6 +44,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             userId = jwtUtil.extractUserId(token);
         }
         else{
+            throw new InvalidTokenException();
+        }
+
+        if(accessTokenRepository.findByAccessToken(token).isPresent()){
             throw new InvalidTokenException();
         }
 

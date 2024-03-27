@@ -1,6 +1,7 @@
 package com.gostop.security.domain.account;
 
 import com.gostop.security.global.dto.requset.AccountCreateRequestDto;
+import com.gostop.security.global.exception.account.DuplicatedIdException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,5 +40,18 @@ public class AccountServiceTest {
 
         //then
         assertDoesNotThrow(() -> accountService.signup(accountCreateDto));
+    }
+
+    @Test
+    @DisplayName("[Account Service] 중복된 이메일 존재로 생성에 실패한다.")
+    void testSignupFailWithDuplicatedEmail(){
+        //given
+        AccountCreateRequestDto accountCreateDto = new AccountCreateRequestDto("testEmail", "testPassword","testNickname");
+
+        //when
+        when(accountRepository.findByEmail(accountCreateDto.getEmail())).thenReturn(Optional.of(new Account(1L, accountCreateDto.getEmail(), accountCreateDto.getPassword(), accountCreateDto.getNickname())));
+
+        //then
+        assertThrows(DuplicatedIdException.class, () -> accountService.signup(accountCreateDto));
     }
 }

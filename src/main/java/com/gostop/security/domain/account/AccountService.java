@@ -19,22 +19,29 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     @Transactional
     public void signup(AccountCreateRequestDto accountCreateRequestDto) {
-        if (accountRepository.findByAccountId(accountCreateRequestDto.getId()).isPresent()) {
+        if (accountRepository.findByEmail(accountCreateRequestDto.getEmail()).isPresent()) {
             //중복 아이디
             throw new DuplicatedIdException();
         }
         String encodedPassword = passwordEncoder.encode(accountCreateRequestDto.getPassword());
 
+//        Account account = Account.builder()
+//                .accountId(accountCreateRequestDto.getId())
+//                .name(accountCreateRequestDto.getName())
+//                .password(encodedPassword)
+//                .role("PLAYER")
+//                .win(0L)
+//                .lose(0L)
+//                .money(10000L)
+//                .score(0L)
+//                .profile_url("asd")
+//                .build();
+
+
         Account account = Account.builder()
-                .accountId(accountCreateRequestDto.getId())
-                .name(accountCreateRequestDto.getName())
+                .email(accountCreateRequestDto.getEmail())
+                .nickname(accountCreateRequestDto.getNickname())
                 .password(encodedPassword)
-                .role("PLAYER")
-                .win(0L)
-                .lose(0L)
-                .money(10000L)
-                .score(0L)
-                .profile_url("asd")
                 .build();
 
         accountRepository.save(account);

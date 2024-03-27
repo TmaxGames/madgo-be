@@ -93,7 +93,7 @@ public class JwtUtil {
     public Boolean isValidateAccessToken(String token, Account account, JwtType expect) {
         final String userId = extractUserId(token);
         final String jwtType = (String) extractAllClaims(token).get("jwtType");
-        return userId.equals(account.getAccountId()) && !isTokenExpired(token) && jwtType.equals(expect.toString());
+        return userId.equals(account.getEmail()) && !isTokenExpired(token) && jwtType.equals(expect.toString());
     }
 
     public Boolean isValidUsersNotExpiredRefreshToken(String userId, RefreshToken refreshToken){

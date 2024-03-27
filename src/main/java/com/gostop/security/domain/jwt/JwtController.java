@@ -1,9 +1,7 @@
 package com.gostop.security.domain.jwt;
 
 import com.gostop.security.global.dto.ResponseDto;
-import com.gostop.security.global.dto.requset.AccountCreateRequestDto;
 import com.gostop.security.global.dto.requset.TokenCreateRequestDto;
-import com.gostop.security.global.dto.requset.TokenRefreshRequestDto;
 import com.gostop.security.global.dto.response.AccessTokenResponseDto;
 import com.gostop.security.global.dto.response.JwtIssueResponseDto;
 import com.gostop.security.global.exception.ErrorResponse;
@@ -13,13 +11,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,7 +41,7 @@ public class JwtController {
                     description = "권한이 없는 사용자의 경우 401 반환",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<AccessTokenResponseDto> issue(@RequestBody TokenCreateRequestDto tokenCreateRequestDto, HttpServletResponse response){
+    public ResponseEntity<AccessTokenResponseDto> login(@RequestBody TokenCreateRequestDto tokenCreateRequestDto, HttpServletResponse response){
         JwtIssueResponseDto dto = jwtService.authenticateAndGetToken(tokenCreateRequestDto);
         AccessTokenResponseDto responseDto = AccessTokenResponseDto.builder()
                 .accessToken(dto.getAccessToken())

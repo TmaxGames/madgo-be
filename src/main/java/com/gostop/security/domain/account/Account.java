@@ -17,22 +17,22 @@ public class Account {
     @Column(name = "ID")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "ACCOUNT_ID")
-    private String accountId;
+    @Column(name = "EMAIL")
+    private String email;
     @Column(name = "PASSWORD")
     private String password;
-    @Column(name = "NAME")
-    private String name;
-    @Column(name = "ROLE")
-    private String role;
-    @Column(name = "MONEY")
-    private Long money;
-    @Column(name = "SCORE")
-    private Long score;
-    @Column(name = "WIN")
-    private Long win;
-    @Column(name = "LOSE")
-    private Long lose;
-    @Column(name = "PROFILE_URL")
-    private String profile_url;
+    @Column(name = "NICKNAME")
+    private String nickname;
+//    @Column(name = "ROLE")
+//    private String role;
+//    @Column(name = "MONEY")
+//    private Long money;
+//    @Column(name = "SCORE")
+//    private Long score;
+//    @Column(name = "WIN")
+//    private Long win;
+//    @Column(name = "LOSE")
+//    private Long lose;
+//    @Column(name = "PROFILE_URL")
+//    private String profile_url;
 }

@@ -15,7 +15,7 @@ public class UserInfoService implements UserDetailsService {
     private final AccountRepository accountRepository;
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        Account account = accountRepository.findByAccountId(id).orElseThrow(InvalidAccountException::new);
+        Account account = accountRepository.findByEmail(id).orElseThrow(InvalidAccountException::new);
         return new UserInfoDetails(account);
     }
 }

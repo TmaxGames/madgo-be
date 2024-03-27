@@ -16,9 +16,10 @@ public class UserInfoDetails implements UserDetails {
     private final List<GrantedAuthority> authorityList;
 
     public UserInfoDetails(Account account){
-        name = account.getName();
+        name = account.getNickname();
         password = account.getPassword();
-        authorityList = Stream.of(account.getRole())
+//        authorityList = Stream.of(account.getRole())
+        authorityList = Stream.of("NoAuth")
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

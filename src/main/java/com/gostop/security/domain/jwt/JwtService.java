@@ -7,13 +7,11 @@ import com.gostop.security.domain.jwt.access.AccessTokenRepository;
 import com.gostop.security.domain.jwt.refresh.RefreshToken;
 import com.gostop.security.domain.jwt.refresh.RefreshTokenRepository;
 import com.gostop.security.global.dto.requset.TokenCreateRequestDto;
-import com.gostop.security.global.dto.requset.TokenRefreshRequestDto;
 import com.gostop.security.global.dto.response.JwtIssueResponseDto;
 import com.gostop.security.global.exception.account.InvalidAccountException;
 import com.gostop.security.global.exception.token.InvalidTokenException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,12 +31,12 @@ public class JwtService {
     private final JwtUtil jwtUtil;
     public JwtIssueResponseDto authenticateAndGetToken(TokenCreateRequestDto tokenCreateRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(tokenCreateRequestDto.getId(), tokenCreateRequestDto.getPassword())
+                new UsernamePasswordAuthenticationToken(tokenCreateRequestDto.getEmail(), tokenCreateRequestDto.getPassword())
         );
         if (authentication.isAuthenticated()) {
             return JwtIssueResponseDto.builder()
-                    .accessToken(jwtUtil.generateToken(tokenCreateRequestDto.getId(), JwtType.ACCESS_TOKEN))
-                    .refreshToken(jwtUtil.generateToken(tokenCreateRequestDto.getId(), JwtType.REFRESH_TOKEN))
+                    .accessToken(jwtUtil.generateToken(tokenCreateRequestDto.getEmail(), JwtType.ACCESS_TOKEN))
+                    .refreshToken(jwtUtil.generateToken(tokenCreateRequestDto.getEmail(), JwtType.REFRESH_TOKEN))
                     .build();
         } else {
             throw new InvalidAccountException();
@@ -57,7 +55,7 @@ public class JwtService {
         String[] parsedAccessToken = Authorization.split(" ");
         String accessTokenString = parsedAccessToken[1];
 
-        Account account = accountRepository.findByAccountId(accountId).orElseThrow(InvalidAccountException::new);
+        Account account = accountRepository.findByEmail(accountId).orElseThrow(InvalidAccountException::new);
         if(!jwtUtil.isValidateAccessToken(accessTokenString, account, JwtType.ACCESS_TOKEN)){
             throw new InvalidTokenException();
         }

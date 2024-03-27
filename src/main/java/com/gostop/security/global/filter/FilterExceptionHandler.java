@@ -1,5 +1,7 @@
 package com.gostop.security.global.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gostop.security.global.dto.ErrorResponseDto;
 import com.gostop.security.global.exception.CustomException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -22,10 +24,16 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
         } catch (CustomException e) {
             response.setStatus(e.getErrorCode().getStatus());
         }catch (JwtException e){
-            response.setStatus(401);
+            int status = 401;
+            String errorJsonResponse = new ObjectMapper().writeValueAsString(new ErrorResponseDto(status, e.getMessage()));
+            response.setStatus(status);
+            response.getWriter().write(errorJsonResponse);
         } catch (Exception e){
-            response.setStatus(500);
+            int status = 500;
+            String message = "internal server error";
+            String errorJsonResponse = new ObjectMapper().writeValueAsString(new ErrorResponseDto(status, message));
+            response.setStatus(status);
+            response.getWriter().write(errorJsonResponse);
         }
     }
-
 }

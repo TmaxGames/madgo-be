@@ -29,6 +29,8 @@ public class JwtService {
     private final AccountRepository accountRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+
+    @Transactional
     public JwtIssueResponseDto authenticateAndGetToken(TokenCreateRequestDto tokenCreateRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(tokenCreateRequestDto.getEmail(), tokenCreateRequestDto.getPassword())
@@ -72,6 +74,7 @@ public class JwtService {
         accessTokenRepository.save(accessToken);
     }
 
+    @Transactional
     public JwtIssueResponseDto refresh(String accountId, HttpServletRequest request) {
         String token = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals("REFRESH_TOKEN"))

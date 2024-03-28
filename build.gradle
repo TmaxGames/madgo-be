@@ -46,8 +46,34 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	// TestContainer
+	testImplementation "org.testcontainers:testcontainers:1.16.2"
+	testImplementation "org.testcontainers:junit-jupiter:1.16.2"
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+sourceSets {
+	integrationTest {
+		java.srcDir "$projectDir/src/integrationTest/java"
+		resources.srcDir "$projectDir/src/integrationTest/resources"
+		compileClasspath += main.output + test.output
+		runtimeClasspath += main.output + test.output
+	}
+}
+
+configurations {
+	integrationTestImplementation.extendsFrom implementation
+	integrationTestImplementation.extendsFrom testImplementation
+	integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+task integrationTest(type: Test) {
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	useJUnitPlatform()
+}
+
+check.dependsOn integrationTest
